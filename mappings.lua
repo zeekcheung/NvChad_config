@@ -5,11 +5,11 @@ local M = {}
 M.disabled = {
   n = {
     ["<leader>ma"] = "",
-    ["<leader>lf"] = "",
-    ["<leader>ls"] = "",
-    ["<leader>ph"] = "",
-    ["<leader>pf"] = "",
-    ["<leader>pt"] = "",
+    -- ["<leader>lf"] = "",
+    -- ["<leader>ls"] = "",
+    -- ["<leader>ph"] = "",
+    -- ["<leader>pf"] = "",
+    -- ["<leader>pt"] = "",
   },
 }
 
@@ -22,14 +22,6 @@ M.general = {
 
     -- Copy
     ["<C-c>"] = { "<cmd> %y <CR>", "Copy selection" },
-
-    -- Format
-    ["<leader>cf"] = {
-      function()
-        vim.lsp.buf.format { async = true }
-      end,
-      "LSP formatting",
-    },
 
     -- Quit
     ["<leader>qq"] = { "<cmd> qa <CR>", "Quit all" },
@@ -60,19 +52,19 @@ M.general = {
 M.tabufline = {
   n = {
     -- cycle through buffers
-    ["<S-l>"] = {
-      function()
-        require("nvchad.tabufline").tabuflineNext()
-      end,
-      "Goto next buffer",
-    },
-
-    ["<S-h>"] = {
-      function()
-        require("nvchad.tabufline").tabuflinePrev()
-      end,
-      "Goto prev buffer",
-    },
+    -- ["<S-l>"] = {
+    --   function()
+    --     require("nvchad.tabufline").tabuflineNext()
+    --   end,
+    --   "Goto next buffer",
+    -- },
+    --
+    -- ["<S-h>"] = {
+    --   function()
+    --     require("nvchad.tabufline").tabuflinePrev()
+    --   end,
+    --   "Goto prev buffer",
+    -- },
   },
 }
 
@@ -98,25 +90,27 @@ M.nvimtree = {
   n = {
     -- toggle
     ["<leader>e"] = { "<cmd> NvimTreeToggle <CR>", "Toggle nvimtree" },
+    ["<C-e>"] = { "<cmd> NvimTreeToggle <CR>", "Toggle nvimtree" },
   },
 }
 
 M.telescope = {
   n = {
     -- find
-    ["<leader>fa"] = { "<cmd> Telescope autocomands <CR>", "Auto commands" },
-    ["<leader>fb"] = { "<cmd> Telescope buffers <CR>", "Find buffers" },
+    ["<leader>fa"] = { "<cmd> Telescope autocommands <CR>", "Auto commands" },
+    ["<leader>fb"] = { "<cmd> Telescope buffers <CR>", "Buffers" },
     ["<leader>fc"] = { "<cmd> e $MYVIMRC <CR>", "Config files" },
-    ["<leader>fd"] = { "<cmd> Telescope diagnostic bufnr=0 <CR>", "Document diagnostics" },
-    ["<leader>fD"] = { "<cmd> Telescope diagnostic <CR>", "Workspace diagnostics" },
-    ["<leader>ff"] = { "<cmd> Telescope find_files <CR>", "Find files" },
-    ["<leader>fF"] = { "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <CR>", "Find all" },
+    ["<leader>fd"] = { "<cmd> Telescope diagnostics bufnr=0 <CR>", "Document diagnostics" },
+    ["<leader>fD"] = { "<cmd> Telescope diagnostics <CR>", "Workspace diagnostics" },
+    ["<leader>ff"] = { "<cmd> Telescope find_files <CR>", "Files" },
+    ["<leader>fF"] = { "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <CR>", "All files" },
     ["<leader>fh"] = { "<cmd> Telescope help_tags <CR>", "Help page" },
-    ["<leader>fm"] = { "<cmd> Telescope marks <CR>", "Find bookmarks" },
-    ["<leader>fp"] = { "<cmd> Telescope projects <CR>", "Find projects" },
+    ["<leader>fk"] = { "<cmd> Telescope keymaps <CR>", "Keymaps" },
+    ["<leader>fM"] = { "<cmd> Telescope marks <CR>", "Bookmarks" },
+    ["<leader>fp"] = { "<cmd> Telescope projects <CR>", "Projects" },
     ["<leader>fw"] = { "<cmd> Telescope live_grep <CR>", "Live grep" },
-    ["<leader>fo"] = { "<cmd> Telescope oldfiles <CR>", "Find oldfiles" },
-    ["<leader>fr"] = { "<cmd> Telescope registers <CR>", "Find registers" },
+    ["<leader>fo"] = { "<cmd> Telescope oldfiles <CR>", "Oldfiles" },
+    ["<leader>fr"] = { "<cmd> Telescope registers <CR>", "Registers" },
     ["<leader>fz"] = { "<cmd> Telescope current_buffer_fuzzy_find <CR>", "Find in current buffer" },
 
     -- git
@@ -124,7 +118,7 @@ M.telescope = {
     ["<leader>gt"] = { "<cmd> Telescope git_status <CR>", "Git status" },
 
     -- theme switcher
-    ["<leader>uc"] = { "<cmd> Telescope themes <CR>", "Nvchad themes" },
+    ["<leader>ft"] = { "<cmd> Telescope themes <CR>", "Nvchad themes" },
   },
 }
 

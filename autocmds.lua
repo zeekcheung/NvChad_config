@@ -71,3 +71,17 @@ if string.match(os_type, "Windows") then
   vim.opt.shellquote = ""
   vim.opt.shellxquote = ""
 end
+
+-- Auto load last session
+autocmd({ "VimEnter" }, {
+  group = augroup("Persistence", { clear = true }),
+  callback = function()
+    if vim.fn.argc() == 0 and not vim.g.started_with_stdin then
+      require("persistence").load()
+      require("nvim-tree.api").tree.toggle(false, true)
+    else
+      require("persistence").stop()
+    end
+  end,
+  nested = true,
+})

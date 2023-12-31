@@ -2,8 +2,8 @@
 local M = {}
 
 M.ui = {
-  theme = "everblush",
-  theme_toggle = { "everblush", "one_light" },
+  theme = "gruvchad",
+  theme_toggle = { "gruvchad", "one_light" },
 
   telescope = { style = "bordered" },
 

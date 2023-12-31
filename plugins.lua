@@ -88,12 +88,18 @@ local plugins = {
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
+      view = {
+        width = {
+          padding = 0,
+        },
+      },
       git = {
         enable = true,
         ignore = false,
       },
 
       renderer = {
+        root_folder_label = true,
         highlight_git = true,
         icons = {
           show = {
@@ -104,8 +110,23 @@ local plugins = {
 
       update_focused_file = {
         enable = true,
-        update_root = true,
+        update_root = false,
       },
+
+      on_attach = function(bufnr)
+        local api = require "nvim-tree.api"
+        local function opts(desc)
+          return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+        end
+
+        api.config.mappings.default_on_attach(bufnr)
+
+        local set = vim.keymap.set
+        -- local del = vim.keymap.del
+
+        -- override default keymaps
+        set("n", "<C-e>", api.tree.toggle, opts "toggle")
+      end,
     },
   },
 
@@ -161,21 +182,6 @@ local plugins = {
   },
 
   {
-    "folke/which-key.nvim",
-    optional = true,
-    opts = {
-      defaults = {
-        ["<leader>c"] = { name = "+code" },
-        ["<leader>f"] = { name = "+find" },
-        ["<leader>g"] = { name = "+git" },
-        ["<leader>l"] = { name = "+lazy" },
-        ["<leader>s"] = { name = "+session" },
-        ["<leader>q"] = { name = "+quit" },
-      },
-    },
-  },
-
-  {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {},
@@ -227,107 +233,50 @@ local plugins = {
   },
 
   {
-    "folke/persistence.nvim",
-    event = "BufReadPre",
-    opts = { options = vim.opt.sessionoptions:get() },
-    -- stylua: ignore
-    keys = {
-      { "<leader>s", function() require("persistence").load() end, desc = "Restore Session" },
-      { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
-      { "<leader>qd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
-    },
+    "stevearc/dressing.nvim",
+    init = function()
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.ui.select = function(...)
+        require("lazy").load { plugins = { "dressing.nvim" } }
+        return vim.ui.select(...)
+      end
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.ui.input = function(...)
+        require("lazy").load { plugins = { "dressing.nvim" } }
+        return vim.ui.input(...)
+      end
+    end,
   },
 
   {
-    "akinsho/toggleterm.nvim",
-    version = "*",
-    event = "VeryLazy",
-    cmd = { "ToggleTerm", "TermExec" },
-    keys = {
-      { "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" },
-      { "<leader>th", "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" },
-      { "<leader>tv", "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" },
-      { "<F7>", "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
-      {
-        "<leader>tt",
-        function()
-          local cmd = tostring(math.floor(vim.fn.rand(vim.fn.srand()) % 1000 + 1)) .. "ToggleTerm"
-          vim.cmd(cmd)
-        end,
-        desc = "ToggleTerm new",
-      },
-
-      { mode = "t", "<esc>", [[<C-\><C-n>]], buffer = 0 },
-      { mode = "t", "<C-h>", [[<Cmd>wincmd h<CR>]], buffer = 0 },
-      { mode = "t", "<C-j>", [[<Cmd>wincmd j<CR>]], buffer = 0 },
-      { mode = "t", "<C-k>", [[<Cmd>wincmd k<CR>]], buffer = 0 },
-      { mode = "t", "<C-l>", [[<Cmd>wincmd l<CR>]], buffer = 0 },
-    },
+    "folke/persistence.nvim",
+    event = "BufReadPre", -- this will only start session saving when an actual file was opened
     opts = {
-      highlights = {
-        Normal = { link = "Normal" },
-        NormalNC = { link = "NormalNC" },
-        NormalFloat = { link = "NormalFloat" },
-        FloatBorder = { link = "FloatBorder" },
-        StatusLine = { link = "StatusLine" },
-        StatusLineNC = { link = "StatusLineNC" },
-        WinBar = { link = "WinBar" },
-        WinBarNC = { link = "WinBarNC" },
-      },
-      size = function(term)
-        if term.direction == "horizontal" then
-          return 15
-        elseif term.direction == "vertical" then
-          return vim.o.columns * 0.4
-        end
-      end,
-      on_create = function()
-        vim.opt.foldcolumn = "0"
-        vim.opt.signcolumn = "no"
-      end,
-      open_mapping = [[<F7>]],
-      shading_factor = 2,
-      direction = "float",
-      float_opts = { border = "rounded" },
-      hide_numbers = true,
-      autochdir = true,
-      start_in_insert = false,
-      winbar = {
-        enabled = false,
-      },
-      close_on_exit = true,
-      auto_scroll = false,
+      options = vim.opt.sessionoptions:get(),
     },
-
-    config = function(_, opts)
-      require("toggleterm").setup(opts)
-
-      local Terminal = require("toggleterm.terminal").Terminal
-
-      local lazygit = Terminal:new {
-        cmd = "lazygit",
-        dir = "git_dir",
-        direction = "float",
-        float_opts = {
-          border = "double",
-        },
-        -- function to run on opening the terminal
-        on_open = function(term)
-          vim.cmd "startinsert!"
-          vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+    keys = {
+      {
+        "<leader>qs",
+        function()
+          require("persistence").load()
         end,
-        -- function to run on closing the terminal
-        on_close = function(term)
-          vim.cmd "startinsert!"
+        desc = "Restore Session",
+      },
+      {
+        "<leader>ql",
+        function()
+          require("persistence").load { last = true }
         end,
-      }
-
-      local map = vim.keymap.set
-
-      map("n", "<leader>gg", function()
-        lazygit:toggle()
-      end, { silent = true })
-    end,
+        desc = "Restore Last Session",
+      },
+      {
+        "<leader>qd",
+        function()
+          require("persistence").stop()
+        end,
+        desc = "Don't Save Current Session",
+      },
+    },
   },
 }
 
